@@ -42,12 +42,14 @@ app.get('/', (c) => {
 })
 
 const portArgIndex = process.argv.indexOf('--port')
-let port = 3000;
-if (portArgIndex !== -1) {
-  port = parseInt(process.argv[portArgIndex + 1])
-} else if (process.env.PORT) {
-  port = parseInt(process.env.PORT)
-}
+#let port = 3000;
+#if (portArgIndex !== -1) {
+#  port = parseInt(process.argv[portArgIndex + 1])
+#} else if (process.env.PORT) {
+ # port = parseInt(process.env.PORT)
+#}
+const portIndex = process.argv.indexOf('--port');
+const port = portIndex > -1 ? parseInt(process.argv[portIndex + 1], 10) : 3000;
 
 serve({
   fetch: app.fetch,
