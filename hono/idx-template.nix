@@ -38,35 +38,9 @@ idx-template \
     cp -rf ${./dev.nix} "$WS_NAME/.idx/dev.nix"
     chmod -R +w "$WS_NAME"
     
-  #  file="$WS_NAME/src/index.ts"
-  #  sed -i 's/const port = 3000/const port = parseInt(process.env.PORT || '9002', 10)/g' "$file"
-
-    # Overwrite src/index.ts with content that correctly handles port assignment
-    cat > "$WS_NAME/src/index.ts" << 'EOF'
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-
-const app = new Hono()
-
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-const portArgIndex = process.argv.indexOf('--port')
-let port = 3000;
-if (portArgIndex !== -1) {
-  port = parseInt(process.argv[portArgIndex + 1])
-} else if (process.env.PORT) {
-  port = parseInt(process.env.PORT)
-}
-
-serve({
-  fetch: app.fetch,
-  port: port
-}, (info) => {
-  console.log(`Server is running on http://localhost:\${info.port}`)
-})
-EOF
+    file="$WS_NAME/src/index.ts"
+ #   sed -i 's/const port = 3000/const port = parseInt(process.env.PORT || '9002', 10)/g' "$file"
+  #  const port = parseInt(process.env.PORT || '9002', 10)/g' "$file"
 
     mv "$WS_NAME" "$out"
     cd "$out"; npm install --package-lock-only --ignore-scripts
