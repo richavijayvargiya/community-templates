@@ -1,4 +1,3 @@
-
 /*
  Copyright 2024 Google LLC
 
@@ -34,40 +33,40 @@ idx-template \
       else if manager == "bun" then "bun create hono@latest \"$WS_NAME\" --template nodejs --pm bun --install"
       else "npm create hono@latest \"$WS_NAME\" -- --template nodejs --pm npm --install"
     }
-
+    
     mkdir -p "$WS_NAME/.idx/"
     cp -rf ${./dev.nix} "$WS_NAME/.idx/dev.nix"
     chmod -R +w "$WS_NAME"
+    
+  #  file="$WS_NAME/src/index.ts"
+  #  sed -i 's/const port = 3000/const port = parseInt(process.env.PORT || '9002', 10)/g' "$file"
 
-    file="$WS_NAME/src/index.ts"
+    # Overwrite src/index.ts with content that correctly handles port assignment
+    cat > "$WS_NAME/src/index.ts" << 'EOF'
+import { serve } from '@hono/node-server'
+import { Hono } from 'hono'
 
-    # Inject a resolvePort helper above the default port line (only once).
-    # This supports: environment PORT, "--port 9002", and "--port=9002".
-    sed -i '/const port = 3000/i \
-function resolvePort(defaultPort = 9002): number {\
-  const fromEnv = process.env.PORT;\
-  if (fromEnv && !Number.isNaN(Number(fromEnv))) {\
-    return Number(fromEnv);\
-  }\
-  const argv = process.argv.slice(2);\
-  for (let i = 0; i < argv.length; i++) {\
-    const arg = argv[i];\
-    if (arg === "--port" && argv[i + 1] && !Number.isNaN(Number(argv[i + 1]))) {\
-      return Number(argv[i + 1]);\
-    }\
-    if (arg.startsWith("--port=")) {\
-      const val = arg.split("=")[1];\
-      if (val && !Number.isNaN(Number(val))) {\
-        return Number(val);\
-      }\
-    }\
-  }\
-  return defaultPort;\
-}\
-' "$file"
+const app = new Hono()
 
-    # Replace the original "const port = 3000" with "const port = resolvePort(9002)"
-    sed -i 's/const port = 3000/const port = resolvePort(9002)/g' "$file"
+app.get('/', (c) => {
+  return c.text('Hello Hono!')
+})
+
+const portArgIndex = process.argv.indexOf('--port')
+let port = 3000;
+if (portArgIndex !== -1) {
+  port = parseInt(process.argv[portArgIndex + 1])
+} else if (process.env.PORT) {
+  port = parseInt(process.env.PORT)
+}
+
+serve({
+  fetch: app.fetch,
+  port: port
+}, (info) => {
+  console.log(`Server is running on http://localhost:\${info.port}`)
+})
+EOF
 
     mv "$WS_NAME" "$out"
     cd "$out"; npm install --package-lock-only --ignore-scripts
