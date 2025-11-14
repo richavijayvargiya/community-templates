@@ -40,8 +40,7 @@ idx-template \
     
     file="$WS_NAME/src/index.ts"
     
-  #   sed -i 's/port: 3000/port: parseInt(process.env.PORT || '9002', 10)/g' "$file"
-     sed -i 's/port: 3000/port: parseInt(process.env.PORT || '\''9002'\'', 10)/g' "$file"
+    sed -i 's/port: 3000/port: parseInt(process.env.PORT || '\''9002'\'', 10)/g' "$file"
 
  
 
