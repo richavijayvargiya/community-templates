@@ -18,12 +18,15 @@
 
       packagesV16 = [
         "pkgs.gcc"
-        "pkgs.python311"
-        "pkgs.openldap"
-        "pkgs.openldap.dev"
-        "pkgs.cyrus_sasl.dev"
-        "pkgs.libpqxx"
-        "pkgs.pkg-config"
+    "pkgs.python311"
+    "pkgs.openldap"
+    "pkgs.openldap.dev"
+    "pkgs.cyrus_sasl.dev"
+    "pkgs.libpqxx"
+    "pkgs.python311Packages.wheel"
+    "pkgs.python311Packages.setuptools"
+    "pkgs.openssl.dev"
+    "pkgs.pkg-config"
       ];
 
       packagesV17 = packagesV16;
