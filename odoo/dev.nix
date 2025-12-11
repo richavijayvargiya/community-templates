@@ -47,6 +47,7 @@ CYRUS=$(nix eval --raw nixpkgs#cyrus_sasl.outPath)
           python -m pip install --upgrade pip setuptools wheel
 
           NIX_LDFLAGS="$NIX_LDFLAGS $LDFLAGS $CPPFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
+          pip install -v "python-ldap==3.4.5"
           odoo-bin --save --stop-after-init
           
           mv ../.odoorc odoo.conf
