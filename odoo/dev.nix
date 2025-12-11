@@ -36,7 +36,10 @@
           source .venv/bin/activate
           sed -i '/^python-ldap==/d' .idx/.data/odoo/requirements.txt
           NIX_LDFLAGS="$NIX_LDFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
-          pip install -v "python-ldap==3.4.5"
+          
+         python -m pip install --upgrade pip setuptools wheel
+          pip install --no-binary :all: "python-ldap==3.4.5"
+
           mkdir -p /home/user/odoo/custom_addons
           odoo-bin --save --stop-after-init
           mv ../.odoorc odoo.conf
