@@ -32,30 +32,18 @@
       onCreate = {
         odoo-install = ''
           python -m venv .venv
-          ln -s /home/user/odoo17/.idx/.data/odoo/odoo-bin .venv/bin/odoo-bin
+          ln -s /home/user/$WS_NAME/.idx/.data/odoo/odoo-bin .venv/bin/odoo-bin
+          ln -s /usr/lib/libldap.so .venv/lib/libldap_r.so
           source .venv/bin/activate
-          OPENLDAP_DEV=$(nix eval --raw nixpkgs#openldap.dev.outPath)
-CYRUS_DEV=$(nix eval --raw nixpkgs#cyrus_sasl.dev.outPath)
-OPENSSL_DEV=$(nix eval --raw nixpkgs#openssl.dev.outPath)
-OPENLDAP=$(nix eval --raw nixpkgs#openldap.outPath)
-CYRUS=$(nix eval --raw nixpkgs#cyrus_sasl.outPath)
-
- # Compiler & linker hints: make python-ldap discover headers/libs
-           export CPPFLAGS="-I/usr/include"
-          export LDFLAGS="-L/usr/lib -L/usr/lib64"
-          export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/lib64/pkgconfig"
-          python -m pip install --upgrade pip setuptools wheel
-
-          NIX_LDFLAGS="$NIX_LDFLAGS $LDFLAGS $CPPFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
+          sed -i '/^python-ldap==/d' .idx/.data/odoo/requirements.txt
+          NIX_LDFLAGS="$NIX_LDFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
           pip install -v "python-ldap==3.4.5"
           mkdir -p /home/user/odoo/custom_addons
           odoo-bin --save --stop-after-init
-          
           mv ../.odoorc odoo.conf
-          
           sed -i                                                                 \
-              -e "/^addons_path =/ s/\$/,\/home\/user\/odoo17\/custom_addons/" \
-              -e "s/.local\/share\/Odoo/odoo17\/.idx\/.data\/odoo-data/g"      \
+              -e "/^addons_path =/ s/\$/,\/home\/user\/$WS_NAME\/custom_addons/" \
+              -e "s/.local\/share\/Odoo/$WS_NAME\/.idx\/.data\/odoo-data/g"      \
               odoo.conf
         '';
         # Open editors for the following files by default, if they exist:
