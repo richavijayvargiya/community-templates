@@ -48,10 +48,11 @@ CYRUS=$(nix eval --raw nixpkgs#cyrus_sasl.outPath)
 
           NIX_LDFLAGS="$NIX_LDFLAGS $LDFLAGS $CPPFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
           pip install -v "python-ldap==3.4.5"
+          mkdir -p /home/user/odoo/custom_addons
           odoo-bin --save --stop-after-init
           
           mv ../.odoorc odoo.conf
-          mkdir -p /home/user/odoo/custom_addons
+          
           sed -i                                                                 \
               -e "/^addons_path =/ s/\$/,\/home\/user\/odoo17\/custom_addons/" \
               -e "s/.local\/share\/Odoo/odoo17\/.idx\/.data\/odoo-data/g"      \
