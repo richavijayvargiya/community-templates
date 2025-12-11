@@ -33,11 +33,13 @@
         odoo-install = ''
           python -m venv .venv
           ln -s /home/user/$WS_NAME/.idx/.data/odoo/odoo-bin .venv/bin/odoo-bin
+          ln -s /usr/lib/libldap.so .venv/lib/libldap_r.so
           source .venv/bin/activate
+          sed -i '/^python-ldap==/d' .idx/.data/odoo/requirements.txt
           NIX_LDFLAGS="$NIX_LDFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
+          mkdir -p /home/user/odoo/custom_addons
           odoo-bin --save --stop-after-init
           mv ../.odoorc odoo.conf
-          mkdir -p /home/user/odoo/custom_addons
           sed -i                                                                 \
               -e "/^addons_path =/ s/\$/,\/home\/user\/$WS_NAME\/custom_addons/" \
               -e "s/.local\/share\/Odoo/$WS_NAME\/.idx\/.data\/odoo-data/g"      \
