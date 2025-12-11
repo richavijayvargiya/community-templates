@@ -34,6 +34,18 @@
           python -m venv .venv
           ln -s /home/user/odoo17/.idx/.data/odoo/odoo-bin .venv/bin/odoo-bin
           source .venv/bin/activate
+          OPENLDAP_DEV=$(nix eval --raw nixpkgs#openldap.dev.outPath)
+CYRUS_DEV=$(nix eval --raw nixpkgs#cyrus_sasl.dev.outPath)
+OPENSSL_DEV=$(nix eval --raw nixpkgs#openssl.dev.outPath)
+OPENLDAP=$(nix eval --raw nixpkgs#openldap.outPath)
+CYRUS=$(nix eval --raw nixpkgs#cyrus_sasl.outPath)
+
+ # Compiler & linker hints: make python-ldap discover headers/libs
+          export CPPFLAGS="-I${pkgs.openldap.dev}/include -I${pkgs.cyrus_sasl.dev}/include -I${pkgs.openssl.dev}/include"
+          export LDFLAGS="-L${pkgs.openldap}/lib -L${pkgs.cyrus_sasl}/lib -L${pkgs.openssl.dev}/lib"
+          export PKG_CONFIG_PATH="${pkgs.openldap}/lib/pkgconfig:${pkgs.cyrus_sasl}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig"
+          python -m pip install --upgrade pip setuptools wheel
+
           NIX_LDFLAGS="$NIX_LDFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
           odoo-bin --save --stop-after-init
           
