@@ -23,7 +23,6 @@
         "pkgs.openldap.dev"
         "pkgs.cyrus_sasl.dev"
         "pkgs.libpqxx"
-        "pkgs.pkg-config"
       ];
 
       packagesV17 = packagesV16;
