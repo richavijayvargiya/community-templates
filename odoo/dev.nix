@@ -46,7 +46,7 @@ CYRUS=$(nix eval --raw nixpkgs#cyrus_sasl.outPath)
           export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/lib64/pkgconfig"
           python -m pip install --upgrade pip setuptools wheel
 
-          NIX_LDFLAGS="$NIX_LDFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
+          NIX_LDFLAGS="$NIX_LDFLAGS $LDFLAGS $CPPFLAGS -L$VIRTUAL_ENV/lib" pip install -r .idx/.data/odoo/requirements.txt
           odoo-bin --save --stop-after-init
           
           mv ../.odoorc odoo.conf
